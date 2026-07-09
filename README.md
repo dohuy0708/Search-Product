@@ -16,7 +16,6 @@ To realize this feature, the end-to-end process is organized into **4 core steps
 * **Process:** Map the system architecture and data flows into highly interactive visual diagrams (mockups/dashboards) so that the client and You can easily visualize the solution without reading dry technical specifications.
 * **Visual Presentations (Download and double-click to run directly in your browser):** 
   * 📈 **[Business Value Presentation](search_business_presentation.html)** *(Interactive business value map showing step-by-step query flows).*
-  * 🛠️ **[System Architecture Map](search_architecture_presentation.html)** *(Interactive system architecture and pipeline design).*
 
 ### 3️⃣ PRD Specification & MVP Planning
 * **Process:** Draft a detailed Business Requirements Document (BRD/PRD) structured as **User Stories** with Gherkin-formatted **Acceptance Criteria (Given-When-Then)**, while planning release phases (MVP vs. Future Phases) for the Agile project.
