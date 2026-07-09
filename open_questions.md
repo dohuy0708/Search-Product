@@ -1,42 +1,42 @@
 # ❓ Open Questions for Product Search Engine (Agile Alignment)
 
-Dưới đây là danh sách toàn bộ các câu hỏi mở được rút gọn súc tích và phân nhóm rõ ràng để làm việc, thảo luận và thống nhất yêu cầu (Requirements Sign-off) với khách hàng và các bên liên quan:
+Below is the list of open questions, summarized and categorized, to discuss and align on the requirements (Requirements Sign-off) with clients and stakeholders:
 
 ---
 
-## 1. 🔍 Gợi Ý Tìm Kiếm (Smart Autocomplete)
-* **Q1.1 (Lịch sử tìm kiếm cá nhân):** Hệ thống có ưu tiên hiển thị Lịch sử tìm kiếm gần đây (Search History) của chính người dùng lên đầu hộp gợi ý trước khi hiển thị từ khóa phổ biến không?
-* **Q1.2 (Giới hạn & Tính năng xóa):** Số lượng từ khóa lịch sử tối đa được lưu là bao nhiêu? Có cần tính năng xóa lịch sử (cho phép xóa từng từ hoặc xóa tất cả lịch sử) không?
-* **Q1.3 (Điều kiện kích hoạt):** Điều kiện kích hoạt để gọi API Autocomplete là người dùng phải nhập tối thiểu bao nhiêu ký tự (ví dụ: tối thiểu từ 2 hay 3 ký tự)?
-* **Q1.4 (Tham số Debounce):** Thời gian hoãn gọi API khi người dùng tạm dừng gõ (Debounce time) là bao nhiêu mili-giây? *(Khuyến nghị: 200ms - 300ms để tối ưu số lượng request và đảm bảo tốc độ phản hồi thực tế thay vì 1-2 giây).*
+## 1. 🔍 Smart Autocomplete (Live Suggestions)
+* **Q1.1 (Personal Search History):** Should the system prioritize displaying the user's recent search history at the top of the autocomplete suggestions dropdown before showing global popular search terms?
+* **Q1.2 (Limits & Clearing History):** What is the maximum number of historical search terms to be saved? Is a feature to clear history needed (allowing clearing individual terms or clearing all history)?
+* **Q1.3 (Activation Trigger):** How many minimum characters must the user type to trigger the Autocomplete API call (e.g., minimum of 2 or 3 characters)?
+* **Q1.4 (Debounce Parameter):** What is the debounce time in milliseconds when the user pauses typing? *(Recommendation: 200ms - 300ms to optimize request volume and ensure actual response speed instead of 1-2 seconds).*
 
 ---
 
-## 2. ⚡ Hiệu Năng & Khả Năng Chịu Tải (Performance & Scalability)
-* **Q2.1 (Chỉ số CCU vs RPS):** Con số "500 lượt truy cập đồng thời" trong tài liệu được định nghĩa là số lượng người dùng online cùng lúc (CCU) hay số lượng request hệ thống phải xử lý trong 1 giây (RPS)?
-* **Q2.2 (Dự phóng tải đỉnh):** Dự kiến tải đỉnh (Peak load) trong các dịp chiến dịch Flash Sale đa quốc gia sẽ tăng gấp bao nhiêu lần con số 500 này để đội ngũ chuẩn bị thiết kế hạ tầng phù hợp?
+## 2. ⚡ Performance & Scalability
+* **Q2.1 (CCU vs. RPS Metrics):** Is the figure "500 concurrent visits" in the document defined as the number of concurrent online users (CCU) or the number of requests the system must handle in 1 second (RPS)?
+* **Q2.2 (Peak Load Projection):** How many times is the peak load during multi-national Flash Sale campaigns projected to increase compared to the 500 benchmark, so the team can prepare the appropriate infrastructure design?
 
 ---
 
-## 3. 🌐 Đa Ngôn Ngữ & Dịch Thuật (Multilingual & Translation)
-* **Q3.1 (Cơ chế dịch thuật tối ưu):** Hệ thống sẽ chốt phương án dịch thuật ở thời điểm nào?
-  * **Ingestion-time translation:** Dịch và lưu trữ sẵn khi người bán đăng sản phẩm (Ưu tiên: tốc độ tìm kiếm của người mua cực nhanh vì index có sẵn).
-  * **Query-time translation:** Dịch trực tiếp khi người dùng gõ tìm kiếm (Ưu tiên: tiết kiệm dung lượng lưu trữ chỉ mục của database).
+## 3. 🌐 Multilingual & Translation
+* **Q3.1 (Optimal Translation Strategy):** At what point should the system translate product titles/descriptions?
+  * **Ingestion-time translation:** Translate and store when the seller uploads the product (Priority: extremely fast search speeds for buyers due to pre-indexed translations).
+  * **Query-time translation:** Translate on-the-fly when the user types a search query (Priority: saves index storage space in the database).
 
 ---
 
-## 4. 📊 Thuật Toán Xếp Hạng & Đấu Thầu (Relevance & Ranking)
-* **Q4.1 (Trọng số chi tiết):** Công thức và tỷ lệ trọng số (%) cụ thể giữa các yếu tố xếp hạng (Tiêu đề, Mô tả, Sản phẩm quảng cáo, Tồn kho) là bao nhiêu?
-* **Q4.2 (Ưu tiên hiển thị Sponsored):** Sản phẩm tài trợ/quảng cáo của Seller được ưu tiên hiển thị cố định lên top đầu trang kết quả (ví dụ: cố định 3 vị trí đầu) hay chỉ được cộng thêm điểm ưu tiên (boost score) vào thuật toán xếp hạng chung?
+## 4. 📊 Relevance & Ranking Rules
+* **Q4.1 (Detailed Weights):** What are the exact weight percentages (%) between the ranking factors (Title match, Description match, Sponsored products, Stock availability)?
+* **Q4.2 (Sponsored Product Placement):** Are sponsored/advertised products prioritized and fixed at the top of the results page (e.g., fixed top 3 positions) or are they just given a boost score in the general ranking algorithm?
 
 ---
 
-## 5. 🤖 Vòng Lặp Tự Học AI (Self-Learning Loop)
-* **Q5.1 (Ngưỡng nhận diện từ khóa lạ):** Tiêu chí định lượng để hệ thống ghi nhận một cụm từ là "từ khóa lạ" để phân tích là gì? *(Ví dụ: tần suất xuất hiện tối thiểu bao nhiêu lần trong tuần từ những tìm kiếm trả về 0 kết quả).*
-* **Q5.2 (Tần suất quét log):** Tiến trình chạy ngầm (cron job/worker) quét và phân tích từ khóa lạ sẽ chạy định kỳ bao lâu một lần? *(Mỗi giờ, mỗi ngày, hay gom lại quét vào nửa đêm khi tải hệ thống thấp)?*
+## 5. 🤖 AI Self-Learning Feedback Loop
+* **Q5.1 (Zero-Result Query Threshold):** What are the quantitative criteria for the system to identify a search term as a "strange/new keyword" for analysis? *(e.g., minimum search frequency of X times per week with zero results).*
+* **Q5.2 (Cron Scan Frequency):** How often should the background worker/cron job run to scan and analyze new keywords? *(Hourly, daily, or batched at midnight when system load is low)?*
 
 ---
 
-## ⚙️ 6. Kênh Quản Trị & Phân Quyền (Admin UI & Access Control)
-* **Q6.1 (Tác vụ quản lý từ khóa):** Các tính năng tác vụ cụ thể trên màn hình Admin UI để xử lý các đề xuất từ khóa gồm những gì? *(Ví dụ: Phê duyệt - Approve, Từ chối - Reject, Sửa - Edit, Gộp nhóm từ đồng nghĩa - Merge).*
-* **Q6.2 (Phân quyền bảo mật):** Luồng duyệt từ khóa trên Admin UI có cần phân quyền theo cấp bậc nhân sự không? *(Ví dụ: Nhân viên vận hành chỉ được phép sửa/gộp nhóm, cấp Quản lý/Admin mới được bấm phê duyệt áp dụng luật thực tế).*
+## ⚙️ 6. Admin Control Center & Access Control (Admin UI)
+* **Q6.1 (Keyword Action Items):** What are the specific action items/features on the Admin UI screen for handling keyword suggestions? *(e.g., Approve, Reject, Edit, Merge synonyms).*
+* **Q6.2 (Role-Based Permissions):** Does the approval workflow on the Admin UI require role-based access control? *(e.g., Operations staff can only Edit/Merge synonym groups, while Managers/Admins can click Approve to apply live changes).*
