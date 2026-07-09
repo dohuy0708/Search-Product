@@ -14,7 +14,7 @@ To realize this feature, the end-to-end process is organized into **4 core steps
 
 ### 2️⃣ Feature Decomposition & Visual Client Alignment
 * **Process:** Map the system architecture and data flows into highly interactive visual diagrams (mockups/dashboards) so that the client and You can easily visualize the solution without reading dry technical specifications.
-* **Visual Presentations (Download and double-click to run directly in your browser):** 
+* **Visual Presentation (Download and double-click to run directly in your browser):** 
   * 📈 **[Business Value Presentation](search_business_presentation.html)** *(Interactive business value map showing step-by-step query flows).*
 
 ### 3️⃣ PRD Specification & MVP Planning
@@ -34,7 +34,7 @@ This project utilizes AI as a collaborative copilot to accelerate requirements a
   2. **Actor Analysis:** Analyzed all key actors and system stakeholders interacting with the search engine.
   3. **Verification:** Verified the relationships and connection paths between these actors.
   4. **Code Generation:** Applied the HTML skill to generate interactive, self-contained presentation pages.
-* **Output:** [search_business_presentation.html](search_business_presentation.html) and [search_architecture_presentation.html](search_architecture_presentation.html) *(interactive dashboards).*
+* **Output:** [search_business_presentation.html](search_business_presentation.html) *(interactive dashboard).*
 
 ### 2️⃣ Requirements Review & Gap Analysis
 * **Skill Utilized:** `grill-me` (`npx skills@latest add mattpocock/skills --skill grill-me`)

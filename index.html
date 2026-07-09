@@ -1,0 +1,959 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title> Product Search PineLine </title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script>
+  (function () {
+    const saved = localStorage.getItem('theme');
+    const dark = saved ? saved === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+    document.documentElement.classList.toggle('dark', dark);
+  })();
+</script>
+<style>
+  :root {
+    --bg: #F8F9FA;
+    --surface: #FFFFFF;
+    --surface-hover: #F1F3F5;
+    --border: #E9ECEF;
+    --border-strong: #DEE2E6;
+    --text-primary: #212529;
+    --text-secondary: #495057;
+    --text-muted: #868E96;
+    
+    /* Palette HSL - Kinh doanh hướng ngoại */
+    --primary: hsl(210, 85%, 45%);      /* Blue - Tin cậy, chuyên nghiệp */
+    --primary-soft: hsla(210, 85%, 45%, 0.08);
+    --success: hsl(150, 45%, 37%);      /* Green - Tăng trưởng, doanh số */
+    --success-soft: hsla(150, 45%, 37%, 0.08);
+    --info: hsl(14, 85%, 57%);         /* Clay orange - Trải nghiệm UX */
+    --info-soft: hsla(14, 85%, 57%, 0.08);
+    --warning: hsl(38, 75%, 48%);       /* Gold - Quảng cáo, doanh thu */
+    --warning-soft: hsla(38, 75%, 48%, 0.08);
+    
+    --zone-bg: rgba(33, 37, 41, 0.02);
+    --zone-border: #CED4DA;
+    
+    --sans: 'Outfit', system-ui, -apple-system, sans-serif;
+    --mono: 'JetBrains Mono', ui-monospace, Consolas, monospace;
+    
+    --shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    --shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.08);
+    --card-radius: 12px;
+  }
+  
+  html.dark {
+    --bg: #0C0D0E;
+    --surface: #141517;
+    --surface-hover: #1E2022;
+    --border: #212427;
+    --border-strong: #2D3136;
+    --text-primary: #F8F9FA;
+    --text-secondary: #CED4DA;
+    --text-muted: #6C757D;
+    
+    --primary: hsl(210, 90%, 55%);
+    --primary-soft: hsla(210, 90%, 55%, 0.12);
+    --success: hsl(150, 50%, 50%);
+    --success-soft: hsla(150, 50%, 50%, 0.12);
+    --info: hsl(14, 90%, 62%);
+    --info-soft: hsla(14, 90%, 62%, 0.12);
+    --warning: hsl(38, 80%, 58%);
+    --warning-soft: hsla(38, 80%, 58%, 0.12);
+    
+    --zone-bg: rgba(248, 249, 250, 0.02);
+    --zone-border: #2D3136;
+    
+    --shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    --shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.45);
+  }
+  
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; overflow: hidden; background: var(--bg); color: var(--text-secondary); font-family: var(--sans); }
+  
+  /* Layout */
+  .layout { display: flex; flex-direction: column; height: 100%; }
+  
+  /* Topbar */
+  .topbar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 24px; background: var(--surface); border-bottom: 1px solid var(--border);
+    z-index: 10; flex: none; box-shadow: var(--shadow);
+  }
+  .brand h1 { font-size: 19px; font-weight: 700; color: var(--text-primary); letter-spacing: -0.02em; }
+  .brand p { font-size: 11px; color: var(--text-muted); font-family: var(--mono); text-transform: uppercase; margin-top: 2px; }
+  
+  .flows-selector { display: flex; gap: 8px; align-items: center; }
+  .flow-chip {
+    font-family: var(--sans); font-size: 12px; font-weight: 500;
+    padding: 6px 14px; border: 1px solid var(--border-strong); border-radius: 99px;
+    background: var(--surface); color: var(--text-secondary); cursor: pointer; transition: all .2s ease;
+  }
+  .flow-chip:hover { border-color: var(--text-muted); color: var(--text-primary); }
+  .flow-chip.active { background: var(--success); border-color: var(--success); color: #FFF; box-shadow: 0 2px 8px var(--success-soft); }
+  
+  .actions { display: flex; gap: 10px; align-items: center; }
+  .btn-icon {
+    background: var(--surface); border: 1px solid var(--border-strong);
+    color: var(--text-secondary); cursor: pointer; width: 34px; height: 34px;
+    border-radius: 8px; display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s ease;
+  }
+  .btn-icon:hover { color: var(--text-primary); border-color: var(--text-muted); background: var(--surface-hover); }
+  
+  /* Main Container */
+  .main-container { display: flex; flex: 1; min-height: 0; }
+  
+  /* Left Panel - Briefing & Matrix */
+  .left-panel {
+    width: 440px; border-right: 1px solid var(--border); background: var(--surface);
+    display: flex; flex-direction: column; overflow-y: auto; flex: none;
+    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s ease, border-right-color 0.3s;
+  }
+  .left-panel.collapsed {
+    width: 0;
+    opacity: 0;
+    border-right-color: transparent;
+    pointer-events: none;
+  }
+  .panel-section { padding: 24px; border-bottom: 1px solid var(--border); }
+  .panel-section:last-child { border-bottom: none; }
+  .panel-title { font-size: 15px; font-weight: 700; color: var(--text-primary); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.05em; display: flex; align-items: center; gap: 8px; }
+  .panel-title::before { content: ''; display: inline-block; width: 4px; height: 16px; background: var(--success); border-radius: 2px; }
+  
+  .lead-intro { font-size: 13.5px; line-height: 1.6; color: var(--text-secondary); }
+  .lead-intro p { margin-bottom: 12px; }
+  .lead-intro strong { color: var(--text-primary); }
+  
+  /* Mapping Table */
+  .matrix-table { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 12.5px; }
+  .matrix-table th { background: var(--bg); font-weight: 600; text-align: left; padding: 10px; border-bottom: 2px solid var(--border); color: var(--text-primary); }
+  .matrix-table td { padding: 10px; border-bottom: 1px solid var(--border); vertical-align: top; line-height: 1.5; }
+  .matrix-table tr:hover { background: var(--bg); }
+  
+  .badge-value { font-family: var(--sans); font-size: 10.5px; font-weight: 600; padding: 2px 6px; border-radius: 4px; display: inline-block; margin-bottom: 4px; }
+  .badge-value.value-ux { background: var(--info-soft); color: var(--info); border: 1px solid var(--info); }
+  .badge-value.value-rev { background: var(--warning-soft); color: var(--warning); border: 1px solid var(--warning); }
+  .badge-value.value-ops { background: var(--primary-soft); color: var(--primary); border: 1px solid var(--primary); }
+  
+  /* Middle Canvas Area */
+  .canvas-area { flex: 1; position: relative; background: var(--bg); overflow: hidden; display: flex; flex-direction: column; }
+  .canvas-stage { flex: 1; cursor: grab; position: relative; }
+  .canvas-stage:active { cursor: grabbing; }
+  .canvas-stage svg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+  
+  /* SVG Styles */
+  .zone rect { fill: var(--zone-bg); stroke: var(--zone-border); stroke-width: 1.5; stroke-dasharray: 6 4; rx: 12; transition: all 0.3s; }
+  .zone text.z-title { font-family: var(--sans); font-size: 13px; font-weight: 700; fill: var(--text-primary); text-transform: uppercase; letter-spacing: 0.05em; }
+  .zone text.z-desc { font-family: var(--sans); font-size: 11px; fill: var(--text-muted); }
+  
+  .node { cursor: pointer; transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1); }
+  .node rect { fill: var(--surface); stroke: var(--border-strong); stroke-width: 1.5; rx: 10; transition: stroke 0.2s, fill 0.2s, filter 0.2s; }
+  .node:hover rect { stroke: var(--text-muted); fill: var(--surface-hover); }
+  .node.selected rect { stroke: var(--success) !important; stroke-width: 2.5; }
+  .node text.n-title { font-family: var(--sans); font-size: 13.5px; font-weight: 600; fill: var(--text-primary); pointer-events: none; }
+  .node text.n-tech { font-family: var(--sans); font-size: 10.5px; fill: var(--text-muted); pointer-events: none; }
+  .node text.n-metric { font-family: var(--mono); font-size: 9.5px; font-weight: 600; fill: var(--success); pointer-events: none; }
+  
+  /* Class specific node styles */
+  .node.ui rect { stroke: var(--info); }
+  .node.ui:hover rect { fill: var(--info-soft); }
+  .node.gateway rect { stroke: var(--primary); }
+  .node.gateway:hover rect { fill: var(--primary-soft); }
+  .node.service rect { stroke: var(--success); }
+  .node.service:hover rect { fill: var(--success-soft); }
+  .node.db rect { stroke: var(--warning); }
+  
+  /* Edges & Labels */
+  .edge { stroke: var(--text-muted); stroke-width: 1.5; fill: none; marker-end: url(#arrow-normal); transition: all 0.25s; opacity: 0.7; }
+  .edge.dashed { stroke-dasharray: 5 4; }
+  .edge-label { font-family: var(--sans); font-size: 10.5px; fill: var(--text-muted); transition: all 0.25s; }
+  
+  /* Flowing Active State */
+  .flowing .edge { opacity: 0.15; }
+  .flowing .edge-label { opacity: 0.15; }
+  .flowing .node { opacity: 0.25; }
+  .flowing .zone rect { opacity: 0.35; }
+  
+  .flowing .node.lit { opacity: 1; }
+  .flowing .node.lit rect { stroke: var(--success); box-shadow: 0 0 12px var(--success-soft); }
+  .flowing .edge.lit {
+    opacity: 1; stroke: var(--success); marker-end: url(#arrow-lit);
+    stroke-dasharray: 6 4; animation: strokeMarch 0.8s linear infinite;
+  }
+  .flowing .edge-label.lit { opacity: 1; fill: var(--success); font-weight: 500; }
+  
+  @keyframes strokeMarch {
+    to { stroke-dashoffset: -10; }
+  }
+  
+  /* Zoom Controls Overlay */
+  .canvas-controls {
+    position: absolute; bottom: 20px; left: 20px; display: flex; gap: 8px; align-items: center;
+    background: var(--surface); border: 1px solid var(--border); padding: 6px 12px;
+    border-radius: 30px; box-shadow: var(--shadow); z-index: 5;
+  }
+  .zoom-label { font-family: var(--mono); font-size: 12px; color: var(--text-secondary); min-width: 45px; text-align: center; }
+  .ctrl-btn {
+    background: none; border: none; color: var(--text-secondary); cursor: pointer;
+    font-size: 14px; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;
+    border-radius: 50%; transition: background 0.15s;
+  }
+  .ctrl-btn:hover { background: var(--surface-hover); color: var(--text-primary); }
+  
+  /* Right Panel - Component Details & Active Flow Steps */
+  .right-panel {
+    width: 360px; border-left: 1px solid var(--border); background: var(--surface);
+    display: flex; flex-direction: column; overflow-y: auto; flex: none;
+  }
+  
+  /* Flow Details Container */
+  .flow-details-box {
+    background: var(--success-soft); border-bottom: 1px solid var(--border);
+    padding: 24px; display: none;
+  }
+  .flow-details-box.active { display: block; }
+  .flow-title { font-size: 15px; font-weight: 700; color: var(--success); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.02em; }
+  
+  .flow-steps { list-style-position: inside; }
+  .flow-steps li { font-size: 13px; line-height: 1.6; margin-bottom: 12px; color: var(--text-secondary); position: relative; padding-left: 20px; list-style: none; }
+  .flow-steps li::before {
+    content: ''; position: absolute; left: 0; top: 6px; width: 8px; height: 8px;
+    background: var(--success); border-radius: 50%;
+  }
+  .flow-steps li:last-child { margin-bottom: 0; }
+  
+  /* Node Detail Box */
+  .detail-box { padding: 24px; flex: 1; }
+  .detail-empty {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    height: 100%; color: var(--text-muted); text-align: center; font-size: 13.5px;
+    padding: 40px 20px;
+  }
+  .detail-empty svg { margin-bottom: 16px; opacity: 0.5; }
+  
+  .detail-content { display: none; }
+  .detail-content.active { display: block; }
+  .detail-header { border-bottom: 1px solid var(--border); padding-bottom: 14px; margin-bottom: 16px; }
+  .detail-label { font-family: var(--mono); font-size: 10px; text-transform: uppercase; color: var(--success); letter-spacing: 0.05em; font-weight: 600; }
+  .detail-name { font-size: 18px; font-weight: 700; color: var(--text-primary); margin-top: 4px; }
+  .detail-tech { font-family: var(--sans); font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+  
+  .detail-body { font-size: 13.5px; line-height: 1.6; color: var(--text-secondary); margin-bottom: 20px; }
+  
+  .metric-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
+  .metric-card { background: var(--bg); border: 1px solid var(--border); padding: 12px; border-radius: 8px; }
+  .metric-card .m-title { font-size: 11px; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.02em; }
+  .metric-card .m-value { font-size: 14px; font-weight: 700; color: var(--text-primary); margin-top: 4px; font-family: var(--sans); }
+  
+  @media (max-width: 1200px) {
+    .main-container { flex-direction: column; overflow-y: auto; }
+    .left-panel, .right-panel { width: 100%; height: auto; border: none; }
+    .left-panel {
+      border-bottom: 1px solid var(--border);
+      transition: height 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s ease, border-bottom-color 0.3s;
+    }
+    .left-panel.collapsed {
+      height: 0;
+      opacity: 0;
+      border-bottom-color: transparent;
+      pointer-events: none;
+    }
+    .right-panel { border-top: 1px solid var(--border); }
+    .canvas-area { height: 600px; flex: none; border-bottom: 1px solid var(--border); }
+  }
+</style>
+</head>
+<body>
+
+<div class="layout">
+  <!-- Topbar -->
+  <header class="topbar">
+    <div style="display: flex; align-items: center; gap: 12px;">
+      <button id="overviewToggle" class="btn-icon" title="Show/Hide Overview & Matrix">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="9" y1="3" x2="9" y2="21"></line></svg>
+      </button>
+      <div class="brand">
+        <h1>Search Product PineLine</h1>
+      </div>
+    </div>
+    
+    <div class="flows-selector">
+      <button class="flow-chip active" data-flow="all">All Activities</button>
+      <button class="flow-chip" data-flow="ingestion">Product Upload</button>
+      <button class="flow-chip" data-flow="autocomplete">Live Suggestions</button>
+      <button class="flow-chip" data-flow="search">Search &amp; Ranking</button>
+      <button class="flow-chip" data-flow="learning">Self-Learning &amp; Ads</button>
+    </div>
+    
+    <div class="actions">
+      <button id="themeToggle" class="btn-icon" title="Toggle Light/Dark Mode">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+      </button>
+    </div>
+  </header>
+  
+  <!-- Main Contents -->
+  <div class="main-container">
+    
+    <!-- Left Panel: Briefing & Mapping Table -->
+    <aside class="left-panel">
+      <div class="panel-section">
+        <h2 class="panel-title">Business Overview</h2>
+        <div class="lead-intro">
+          <p style="margin-left: 10px; margin-top: 6px;">📈 <strong>Increase Sales (Conversion Rate)</strong><br>✨ <strong>Premium Experience (Friendly UX)</strong><br>⚡ <strong>Smooth Operations (Ops Efficiency)</strong></p>
+          <p style="margin-top: 10px;">This architecture translates and routes seller products into ultra-fast search indexes automatically, maximizing platform revenue and buyer satisfaction.</p>
+        </div>
+      </div>
+      
+      <div class="panel-section">
+        <h2 class="panel-title">Business Goals vs. Tech Solutions</h2>
+        <div style="overflow-x: auto;">
+          <table class="matrix-table">
+            <thead>
+              <tr>
+                <th style="width: 45%;">Business Goal</th>
+                <th style="width: 55%;">Core Tech Solution</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Customer Retention</strong><br><span style="color: var(--info); font-size: 11px;">Premium UX Experience</span></td>
+                <td>
+                  <span class="badge-value value-ux">Autocomplete &lt; 5ms</span>
+                  <p style="margin-top: 4px; font-size: 11.5px; color: var(--text-secondary);">Predicts keywords instantly from RAM cache (Redis) before the buyer even finishes typing.</p>
+                </td>
+              </tr>
+              <tr>
+                <td><strong>Maximize Sales (Conversion)</strong><br><span style="color: var(--success); font-size: 11px;">Boost matching items</span></td>
+                <td>
+                  <span class="badge-value value-rev">Smart Ranking System</span>
+                  <p style="margin-top: 4px; font-size: 11.5px; color: var(--text-secondary);">Multi-language indexing (Elasticsearch). Ranks results based on: Title matches > Sponsored items > In-stock quantity.</p>
+                </td>
+              </tr>
+              <tr>
+                <td><strong>No More Empty Results</strong><br><span style="color: var(--primary); font-size: 11px;">Capture missed opportunities</span></td>
+                <td>
+                  <span class="badge-value value-ops">Self-Learning &amp; Approval</span>
+                  <p style="margin-top: 4px; font-size: 11.5px; color: var(--text-secondary);">Automatically groups zero-result queries, identifies slang/typos, and suggests mappings to Admin for instant click-to-apply updates.</p>
+                </td>
+              </tr>
+              <tr>
+                <td><strong>New Ad Revenue Stream</strong><br><span style="color: var(--warning); font-size: 11px;">Keyword Ad Bidding</span></td>
+                <td>
+                  <span class="badge-value value-rev">Keyword Ads</span>
+                  <p style="margin-top: 4px; font-size: 11.5px; color: var(--text-secondary);">Allows sellers to bid for top positions on high-value keywords, approved instantly by operations.</p>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </aside>
+    
+    <!-- Middle Panel: SVG Canvas Stage -->
+    <main class="canvas-area">
+      <div class="canvas-stage" id="stage-container">
+        <svg id="architecture-svg" viewBox="0 0 1350 780" preserveAspectRatio="xMidYMid meet">
+          <defs>
+            <marker id="arrow-normal" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M0,1 L10,5 L0,9 z" style="fill: var(--text-muted); opacity: 0.7;"></path>
+            </marker>
+            <marker id="arrow-lit" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+              <path d="M0,1 L10,5 L0,9 z" style="fill: var(--success);"></path>
+            </marker>
+          </defs>
+          
+          <g id="svg-content">
+            <!-- ── ZONES ─────────────────────────────── -->
+            <!-- Zone 1: Giao diện (Presentation) -->
+            <g class="zone" id="zone-presentation">
+              <rect x="30" y="60" width="240" height="660" />
+              <text class="z-title" x="50" y="90">Touchpoints (UI/UX)</text>
+              <text class="z-desc" x="50" y="108">Buyer &amp; Partner Interfaces</text>
+            </g>
+            
+            <!-- Zone 2: Định tuyến (Routing) -->
+            <g class="zone" id="zone-routing">
+              <rect x="300" y="60" width="190" height="660" />
+              <text class="z-title" x="320" y="90">Gateway &amp; Routing</text>
+              <text class="z-desc" x="320" y="108">Security &amp; Multi-tenancy</text>
+            </g>
+            
+            <!-- Zone 3: Xử lý Thông Minh & AI (Smart logic) -->
+            <g class="zone" id="zone-services">
+              <rect x="520" y="60" width="250" height="660" />
+              <text class="z-title" x="540" y="90">Smart Logic &amp; AI</text>
+              <text class="z-desc" x="540" y="108">NLP &amp; Continuous Learning</text>
+            </g>
+            
+            <!-- Zone 4: Tích Hợp (Integration) -->
+            <g class="zone" id="zone-integration">
+              <rect x="800" y="60" width="220" height="660" />
+              <text class="z-title" x="820" y="90">Integration &amp; Queue</text>
+              <text class="z-desc" x="820" y="108">Background Jobs &amp; Reliability</text>
+            </g>
+            
+            <!-- Zone 5: Lưu Trữ (Storage) -->
+            <g class="zone" id="zone-storage">
+              <rect x="1050" y="60" width="270" height="660" />
+              <text class="z-title" x="1070" y="90">High-Speed Storage</text>
+              <text class="z-desc" x="1070" y="108">Indexes, Cache &amp; Main Database</text>
+            </g>
+            
+            <!-- ── EDGES / PATHS ─────────────────────── -->
+            <!-- Autocomplete Flow paths -->
+            <path class="edge" id="e1" d="M 250 170 C 290 170 280 230 320 230" />
+            <path class="edge" id="e3" d="M 470 230 C 500 230 510 180 540 180" />
+            <path class="edge" id="e4" d="M 750 170 L 1070 170" />
+            
+            <!-- Normal Search Flow paths -->
+            <path class="edge" id="e2" d="M 250 190 C 290 190 280 250 320 250" />
+            <path class="edge" id="e5" d="M 750 190 C 900 190 920 370 1070 370" />
+            
+            <!-- Ingestion Flow paths -->
+            <path class="edge" id="e6" d="M 250 370 L 320 370" />
+            <path class="edge" id="e7" d="M 470 370 L 540 370" />
+            <path class="edge" id="e8" d="M 750 370 L 820 370" />
+            <path class="edge" id="e9" d="M 820 395 L 750 395" />
+            <path class="edge" id="e10" d="M 750 405 C 850 405 920 390 1070 390" />
+            <path class="edge" id="e11" d="M 750 420 C 880 420 920 580 1070 580" />
+            
+            <!-- Self-Learning Flow paths -->
+            <path class="edge" id="e12" d="M 750 215 C 750 280 820 280 820 540" />
+            <path class="edge" id="e13" d="M 820 572 L 750 572" />
+            <path class="edge" id="e14_gate" d="M 250 570 L 320 570" />
+            <path class="edge" id="e14_worker" d="M 470 570 L 540 570" />
+            <path class="edge" id="e15_db" d="M 750 590 C 850 590 950 670 1070 590" />
+            <path class="edge" id="e15_es" d="M 750 560 C 920 560 940 415 1070 415" />
+            
+            <!-- Edge Labels -->
+            <text class="edge-label" id="el-e1" x="275" y="160" text-anchor="middle">Types search term...</text>
+            <text class="edge-label" id="el-e4" x="910" y="160" text-anchor="middle">Instant suggestions (&lt;5ms)</text>
+            <text class="edge-label" id="el-e2" x="275" y="220" text-anchor="middle">Clicks Search</text>
+            <text class="edge-label" id="el-e5" x="910" y="225" text-anchor="middle">Fixes spelling, translates &amp; ranks (&lt;50ms)</text>
+            
+            <text class="edge-label" id="el-e6" x="285" y="362" text-anchor="middle">Adds new product</text>
+            <text class="edge-label" id="el-e8" x="785" y="362" text-anchor="middle">Triggers translation</text>
+            <text class="edge-label" id="el-e10" x="910" y="440" text-anchor="middle">Indexes in EN/TH/VI</text>
+            
+            <text class="edge-label" id="el-e12" x="735" y="270" text-anchor="middle">Logs empty queries</text>
+            <text class="edge-label" id="el-e13" x="785" y="562" text-anchor="middle">Analyzes typos</text>
+            
+            <!-- ── NODES ─────────────────────────────── -->
+            <!-- Column 1: Giao Diện -->
+            <g class="node ui" data-k="buyer_ui">
+              <rect x="50" y="125" width="200" height="90" />
+              <text class="n-title" x="70" y="152">Buyer App / Web</text>
+              <text class="n-tech" x="70" y="174">Buyer Web / Mobile App</text>
+              <text class="n-metric" x="70" y="192">Premium Buyer UX</text>
+            </g>
+            
+            <g class="node ui" data-k="seller_ui">
+              <rect x="50" y="325" width="200" height="90" />
+              <text class="n-title" x="70" y="352">Seller Portal</text>
+              <text class="n-tech" x="70" y="374">Seller Portal Dashboard</text>
+              <text class="n-metric" x="70" y="392">Product Listings &amp; Ad Bidding</text>
+            </g>
+            
+            <g class="node ui" data-k="admin_ui">
+              <rect x="50" y="525" width="200" height="90" />
+              <text class="n-title" x="70" y="552">Admin Portal</text>
+              <text class="n-tech" x="70" y="574">Ops Control Center</text>
+              <text class="n-metric" x="70" y="592">Approves rules instantly</text>
+            </g>
+            
+            <!-- Column 2: Gateway -->
+            <g class="node gateway" data-k="api_gateway">
+              <rect x="320" y="125" width="150" height="500" />
+              <text class="n-title" x="395" y="280" text-anchor="middle">API Gateway Layer</text>
+              <text class="n-tech" x="395" y="305" text-anchor="middle">API Routing</text>
+              <text class="n-metric" x="395" y="335" text-anchor="middle" fill="var(--success)">Multi-tenancy</text>
+              <text class="n-tech" x="395" y="365" text-anchor="middle">Data isolation</text>
+              <text class="n-tech" x="395" y="390" text-anchor="middle">Rate limiting</text>
+            </g>
+            
+            <!-- Column 3: Services -->
+            <g class="node service" data-k="search_api">
+              <rect x="540" y="125" width="210" height="95" />
+              <text class="n-title" x="560" y="152">Search Query Engine</text>
+              <text class="n-tech" x="560" y="174">Query Parser &amp; Translator</text>
+              <text class="n-metric" x="560" y="192">NLP &amp; Tokenizer</text>
+            </g>
+            
+            <g class="node service" data-k="ai_enricher">
+              <rect x="540" y="325" width="210" height="95" />
+              <text class="n-title" x="560" y="352">AI Data Enricher</text>
+              <text class="n-tech" x="560" y="374">Data Enrichment Pipeline</text>
+              <text class="n-metric" x="560" y="392">Enriches with EN/TH/VI text</text>
+            </g>
+            
+            <g class="node service" data-k="ai_learning">
+              <rect x="540" y="525" width="210" height="95" />
+              <text class="n-title" x="560" y="552">AI Self-Learning Loop</text>
+              <text class="n-tech" x="560" y="574">Behavioral Analyzer</text>
+              <text class="n-metric" x="560" y="592">Spots typos &amp; zero-results</text>
+            </g>
+            
+            <!-- Column 4: Integration -->
+            <g class="node service" data-k="ai_translation">
+              <rect x="820" y="325" width="180" height="95" />
+              <text class="n-title" x="840" y="352">AI Translation Model</text>
+              <text class="n-tech" x="840" y="374">Machine Translation</text>
+              <text class="n-metric" x="840" y="392">Translates EN &lt;-&gt; TH &lt;-&gt; VI</text>
+            </g>
+            
+            <g class="node service" data-k="integration_queue">
+              <rect x="820" y="525" width="180" height="95" />
+              <text class="n-title" x="840" y="552">Log &amp; Ad Message Queue</text>
+              <text class="n-tech" x="840" y="574">Message Queue</text>
+              <text class="n-metric" x="840" y="592">Ensures zero data loss</text>
+            </g>
+            
+            <!-- Column 5: Storage -->
+            <g class="node db" data-k="autocomplete_cache">
+              <rect x="1070" y="125" width="220" height="95" />
+              <text class="n-title" x="1090" y="152">Autocomplete Cache</text>
+              <text class="n-tech" x="1090" y="174">RAM Redis Cache</text>
+              <text class="n-metric" x="1090" y="192">Instant response &lt; 5ms</text>
+            </g>
+            
+            <g class="node db" data-k="search_engine">
+              <rect x="1070" y="325" width="220" height="95" />
+              <text class="n-title" x="1090" y="352">Smart Search Engine</text>
+              <text class="n-tech" x="1090" y="374">Fuzzy &amp; Ranking rules</text>
+              <text class="n-metric" x="1090" y="392">Fixes typos, applies ranking</text>
+            </g>
+            
+            <g class="node db" data-k="primary_db">
+              <rect x="1070" y="525" width="220" height="95" />
+              <text class="n-title" x="1090" y="552">Primary Database</text>
+              <text class="n-tech" x="1090" y="574">Relational Source of Truth</text>
+              <text class="n-metric" x="1090" y="592">Product catalog &amp; Bid records</text>
+            </g>
+          </g>
+        </svg>
+      </div>
+      
+      <!-- Zoom and Pan Controls -->
+      <div class="canvas-controls">
+        <button id="zoom-out" class="ctrl-btn" title="Zoom Out (Scroll Down)">−</button>
+        <span id="zoom-indicator" class="zoom-label">100%</span>
+        <button id="zoom-in" class="ctrl-btn" title="Zoom In (Scroll Up)">+</button>
+        <button id="zoom-reset" class="ctrl-btn" title="Reset View">⟲</button>
+      </div>
+    </main>
+    
+    <!-- Right Panel: Active Step Descriptions & Clicked Component Info -->
+    <aside class="right-panel">
+      <!-- Flow Steps Info (Visible when a flow is active) -->
+      <div class="flow-details-box" id="flow-steps-container">
+        <h3 class="flow-title" id="flow-display-title">Active Flow</h3>
+        <ol class="flow-steps" id="flow-display-steps">
+          <li>Step 1</li>
+          <li>Step 2</li>
+        </ol>
+      </div>
+      
+      <!-- Component Details -->
+      <div class="detail-box">
+        <div id="detail-empty" class="detail-empty">
+          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg>
+          <p>Click any node on the diagram to see its business role, values, and latency details.</p>
+        </div>
+        
+        <div id="detail-content" class="detail-content">
+          <div class="detail-header">
+            <span class="detail-label" id="comp-label">Component</span>
+            <h3 class="detail-name" id="comp-name">Component Name</h3>
+            <div class="detail-tech" id="comp-tech">Tech Stack / Libraries</div>
+          </div>
+          <div class="detail-body" id="comp-desc">
+            Detailed description of how this component works and why it matters to the business.
+          </div>
+          
+          <div class="metric-grid">
+            <div class="metric-card">
+              <div class="m-title">Core Business Value</div>
+              <div class="m-value" id="comp-scalability">Value</div>
+            </div>
+            <div class="metric-card">
+              <div class="m-title">SLA Latency</div>
+              <div class="m-value" id="comp-latency">N/A</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </aside>
+    
+  </div>
+</div>
+
+<script>
+const DETAILS = {
+  buyer_ui: {
+    label: "Premium Customer Experience (UX)",
+    name: "Buyer UI (App & Web)",
+    tech: "Buyer Web / iOS Swift / Android Kotlin App",
+    desc: "The front-facing storefront for customers. Ensures a premium shopping experience, retaining buyers with instant autocomplete suggestions under 5ms and relevant search results under 50ms.",
+    scalability: "Boosts Customer Retention",
+    latency: "< 5ms (Suggestions) / < 50ms (Search)"
+  },
+  seller_ui: {
+    label: "Seller Revenue Optimization",
+    name: "Seller Portal Dashboard",
+    tech: "Seller Portal Dashboard",
+    desc: "The portal where sellers manage listings and bid for high-converting keyword ads. This directly drives the e-commerce platform's advertisement revenue.",
+    scalability: "Drives Ad Revenue Growth",
+    latency: "Background - No Buyer Impact"
+  },
+  admin_ui: {
+    label: "Operations & Quality Control",
+    name: "Admin Control Center (Ops)",
+    tech: "Ops Control Center",
+    desc: "The central console for operations (Ops) to review AI-suggested synonyms and approve seller keyword bids. Approvals trigger live engine updates without downtime.",
+    scalability: "Minimizes Operational Cost",
+    latency: "Instant (Real-time update)"
+  },
+  api_gateway: {
+    label: "Security & Traffic Routing",
+    name: "API Gateway Layer",
+    tech: "Kong / Apache APISIX Gateway",
+    desc: "Handles all incoming traffic, enforces security rules, rate-limits abuse, and routes requests. Isolates data between regional markets and partners (Multi-tenancy).",
+    scalability: "Protects Platform Stability",
+    latency: "< 1.5ms"
+  },
+  search_api: {
+    label: "Smart Query Interpretation",
+    name: "Search Query Engine",
+    tech: "Query Processing Service",
+    desc: "Removes stopwords, runs bilingual/trilingual segmentation (Thai/Vietnamese/English), expands queries using synonyms, and translates terms on-the-fly for cross-border searches.",
+    scalability: "Understands Buyer Intent",
+    latency: "< 10ms"
+  },
+  ai_enricher: {
+    label: "Auto-Translation & Localization",
+    name: "AI Data Enrichment Pipeline",
+    tech: "AI Enrichment Pipeline",
+    desc: "Runs in the background when a product is created. Automatically enriches the index by translating titles/descriptions into English, Thai, and Vietnamese. Sellers go global instantly without manual work.",
+    scalability: "Saves Manual Translation Effort",
+    latency: "Async (Background Pipeline)"
+  },
+  ai_learning: {
+    label: "Zero-Result Rate Reduction",
+    name: "AI Self-Learning & Analytics",
+    tech: "Analytics & Behavior Learning",
+    desc: "Collects search queries that resulted in zero matches. Automatically clusters terms to detect typos, slang, or new trends, presenting suggestions to Admin to capture missed sales.",
+    scalability: "Reduces Missed Sales",
+    latency: "Async (Continuous Analysis)"
+  },
+  ai_translation: {
+    label: "AI Translation Infrastructure",
+    name: "AI Machine Translation Model",
+    tech: "Machine Translation Engine (Marian / LLM)",
+    desc: "High-performance translation engine that translates product metadata into English and Thai for the ingestion pipeline.",
+    scalability: "Scales Cross-Border Trade",
+    latency: "~150ms"
+  },
+  integration_queue: {
+    label: "Fault-Tolerance & Decoupling",
+    name: "Log & Ad Message Queue",
+    tech: "Message Queue (Kafka / RabbitMQ)",
+    desc: "An asynchronous messaging buffer. If search engines undergo maintenance, this queue safe-keeps product updates and log data, preventing storefront disruptions.",
+    scalability: "Guarantees System Resilience",
+    latency: "< 2ms"
+  },
+  autocomplete_cache: {
+    label: "Ultra-Fast Suggestions (UX)",
+    name: "Autocomplete Redis Cache",
+    tech: "Redis Distributed RAM Cache",
+    desc: "Stores hot-search keywords and dictionary terms in-memory (RAM). Guarantees instantaneous suggestions (<5ms) as soon as the buyer types their first letter.",
+    scalability: "Delivers SLA of < 5ms",
+    latency: "< 2ms"
+  },
+  search_engine: {
+    label: "Sales Optimization (Conversion)",
+    name: "Smart Search Engine",
+    tech: "Elasticsearch Engine",
+    desc: "The core search engine running fuzzy matching (e.g., 'samsng' -> 'Samsung'), synonym expansion, and multi-factor ranking (Title Match > Sponsored Ads > Stock Availability).",
+    scalability: "Maximizes Checkout Rate",
+    latency: "< 35ms"
+  },
+  primary_db: {
+    label: "Transactional Source of Truth",
+    name: "Primary Database",
+    tech: "Relational DB (Postgres/MySQL)",
+    desc: "Stores high-integrity core records: user accounts, primary product catalogs, billing configurations, keyword ad purchases, and approval history.",
+    scalability: "Guarantees Data Integrity",
+    latency: "~10ms - 50ms"
+  }
+};
+
+const FLOWS = {
+  ingestion: {
+    name: "Stage 1: Product Ingestion (Background)",
+    edges: ["e6", "e7", "e8", "e9", "e10", "e11"],
+    nodes: ["seller_ui", "api_gateway", "ai_enricher", "ai_translation", "search_engine", "primary_db"],
+    steps: [
+      "The seller uploads a new product in their local language (e.g., 'Cà phê Robusta nguyên chất') on the <strong>Seller Portal</strong>.",
+      "The request routes through the <strong>API Gateway</strong> for authentication, partner isolation, and rate-limiting.",
+      "The <strong>AI Data Enricher</strong> triggers an asynchronous ingestion worker in the background.",
+      "The <strong>AI Translation Model</strong> automatically translates product metadata into English and Thai.",
+      "Enriched multilingual titles and descriptions are indexed into the <strong>Smart Search Engine</strong> for cross-border searches.",
+      "The original details and transaction records are stored securely in the <strong>Primary Database</strong>."
+    ]
+  },
+  autocomplete: {
+    name: "Stage 2: Instant Autocomplete (Premium UX)",
+    edges: ["e1", "e3", "e4"],
+    nodes: ["buyer_ui", "api_gateway", "search_api", "autocomplete_cache"],
+    steps: [
+      "A buyer types the first few letters (e.g., 'ca...') in the search bar on the <strong>Buyer App / Web</strong>.",
+      "The request is routed instantly through the <strong>API Gateway</strong> to the query engine.",
+      "The <strong>Search Query Engine</strong> retrieves suggestions directly from the in-memory <strong>Autocomplete Cache (Redis)</strong>, avoiding main DB hits.",
+      "Smart keyword suggestions pop up instantly in <strong>under 5ms</strong>, keeping the buyer engaged."
+    ]
+  },
+  search: {
+    name: "Stage 3: Search Execution & Relevance Ranking",
+    edges: ["e2", "e3", "e5"],
+    nodes: ["buyer_ui", "api_gateway", "search_api", "search_engine"],
+    steps: [
+      "A buyer enters a typo (e.g., 'samsng') or searches in a different language (e.g., 'pure coffee') and hits Search on the <strong>Buyer App / Web</strong>.",
+      "The search query goes through the <strong>API Gateway</strong> and is passed to the <strong>Search Query Engine</strong>.",
+      "The engine removes stopwords, fixes spelling errors, and translates terms in real-time.",
+      "The <strong>Smart Search Engine</strong> applies ranking rules (Title Match > Sponsored Ads > Stock Volume) and displays results in <strong>under 50ms</strong>."
+    ]
+  },
+  learning: {
+    name: "Stage 4: AI Self-Learning & Ad Approval",
+    edges: ["e12", "e13", "e14_gate", "e14_worker", "e15_db", "e15_es"],
+    nodes: ["search_api", "integration_queue", "ai_learning", "admin_ui", "api_gateway", "search_engine", "primary_db"],
+    steps: [
+      "<strong>Path A (Self-Learning):</strong> The Query Engine logs zero-result queries to the <strong>Message Queue</strong>. The <strong>AI Self-Learning Model</strong> analyzes typos and suggests synonym rules.",
+      "<strong>Path B (Ad Bidding):</strong> Sellers buy high-value keyword ads ('coffee') via the Seller Portal, forwarding bid requests to operations.",
+      "Operations team accesses the <strong>Admin Control Center</strong> to review ad bids and AI-suggested synonym clusters.",
+      "Admin clicks <strong>Approve</strong>, automatically writing the new search and ad rules to the databases in real-time with zero downtime."
+    ]
+  }
+};
+
+// UI Elements
+const stage = document.getElementById('stage-container');
+const svg = document.getElementById('architecture-svg');
+const svgContent = document.getElementById('svg-content');
+const nodes = document.querySelectorAll('.node');
+const edges = document.querySelectorAll('.edge');
+const edgeLabels = document.querySelectorAll('.edge-label');
+const chips = document.querySelectorAll('.flow-chip');
+
+const flowDetailsContainer = document.getElementById('flow-steps-container');
+const flowDisplayTitle = document.getElementById('flow-display-title');
+const flowDisplaySteps = document.getElementById('flow-display-steps');
+
+const detailEmpty = document.getElementById('detail-empty');
+const detailContent = document.getElementById('detail-content');
+const compLabel = document.getElementById('comp-label');
+const compName = document.getElementById('comp-name');
+const compTech = document.getElementById('comp-tech');
+const compDesc = document.getElementById('comp-desc');
+const compScalability = document.getElementById('comp-scalability');
+const compLatency = document.getElementById('comp-latency');
+
+// Zoom and Pan variables
+let scale = 1;
+let tx = 0;
+let ty = 0;
+let isDragging = false;
+let startX = 0;
+let startY = 0;
+let hasDragged = false;
+const dragThreshold = 5;
+
+// Flow selection
+function setFlow(key) {
+  chips.forEach(c => c.classList.toggle('active', c.dataset.flow === key));
+  edges.forEach(e => e.classList.remove('lit'));
+  edgeLabels.forEach(l => l.classList.remove('lit'));
+  nodes.forEach(n => n.classList.remove('lit'));
+  
+  if (key === 'all') {
+    stage.classList.remove('flowing');
+    flowDetailsContainer.classList.remove('active');
+    return;
+  }
+  
+  const flow = FLOWS[key];
+  if (!flow) return;
+  
+  stage.classList.add('flowing');
+  flow.edges.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.add('lit');
+    const lbl = document.getElementById('el-' + id);
+    if (lbl) lbl.classList.add('lit');
+  });
+  
+  flow.nodes.forEach(k => {
+    const nodeEl = document.querySelector(`.node[data-k="${k}"]`);
+    if (nodeEl) nodeEl.classList.add('lit');
+  });
+  
+  // Show sequence steps
+  flowDisplayTitle.textContent = flow.name;
+  flowDisplaySteps.innerHTML = flow.steps.map(s => `<li>${s}</li>`).join('');
+  flowDetailsContainer.classList.add('active');
+}
+
+chips.forEach(c => c.addEventListener('click', () => setFlow(c.dataset.flow)));
+
+// Node details click selection
+nodes.forEach(n => {
+  n.addEventListener('click', () => {
+    if (hasDragged) return; // Suppress on drag
+    nodes.forEach(x => x.classList.remove('selected'));
+    n.classList.add('selected');
+    
+    const key = n.dataset.k;
+    const detail = DETAILS[key];
+    if (!detail) return;
+    
+    detailEmpty.style.display = 'none';
+    detailContent.classList.add('active');
+    
+    compLabel.textContent = detail.label;
+    compName.textContent = detail.name;
+    compTech.textContent = detail.tech;
+    compDesc.innerHTML = detail.desc;
+    compScalability.textContent = detail.scalability;
+    compLatency.textContent = detail.latency;
+  });
+});
+
+// Reset selection on clicking background
+svg.addEventListener('click', (e) => {
+  if (e.target === svg || e.target.classList.contains('zone') || e.target.tagName === 'svg') {
+    if (hasDragged) return;
+    nodes.forEach(x => x.classList.remove('selected'));
+    detailContent.classList.remove('active');
+    detailEmpty.style.display = 'flex';
+  }
+});
+
+// Zoom & Pan implementation
+const zoomIndicator = document.getElementById('zoom-indicator');
+
+function updateTransform() {
+  svgContent.setAttribute('transform', `translate(${tx}, ${ty}) scale(${scale})`);
+  zoomIndicator.textContent = `${Math.round(scale * 100)}%`;
+}
+
+svg.addEventListener('mousedown', (e) => {
+  if (e.target.closest('.node') || e.target.closest('.flow-chip') || e.target.closest('button')) {
+    // let it click
+  }
+  isDragging = true;
+  startX = e.clientX - tx;
+  startY = e.clientY - ty;
+  hasDragged = false;
+});
+
+svg.addEventListener('mousemove', (e) => {
+  if (!isDragging) return;
+  const newTx = e.clientX - startX;
+  const newTy = e.clientY - startY;
+  
+  if (Math.abs(newTx - tx) > dragThreshold || Math.abs(newTy - ty) > dragThreshold) {
+    hasDragged = true;
+  }
+  
+  tx = newTx;
+  ty = newTy;
+  updateTransform();
+});
+
+window.addEventListener('mouseup', () => {
+  isDragging = false;
+});
+
+svg.addEventListener('click', (e) => {
+  if (hasDragged) {
+    e.stopPropagation();
+    e.preventDefault();
+  }
+}, true);
+
+// Mouse wheel zoom
+svg.addEventListener('wheel', (e) => {
+  e.preventDefault();
+  const rect = svg.getBoundingClientRect();
+  const mx = e.clientX - rect.left;
+  const my = e.clientY - rect.top;
+  
+  const svgX = (mx - tx) / scale;
+  const svgY = (my - ty) / scale;
+  
+  const zoomFactor = 1.08;
+  let newScale = e.deltaY < 0 ? scale * zoomFactor : scale / zoomFactor;
+  newScale = Math.max(0.4, Math.min(newScale, 4.0));
+  
+  tx = mx - svgX * newScale;
+  ty = my - svgY * newScale;
+  scale = newScale;
+  
+  updateTransform();
+}, { passive: false });
+
+// Zoom controls
+document.getElementById('zoom-in').addEventListener('click', () => {
+  const rect = svg.getBoundingClientRect();
+  const mx = rect.width / 2;
+  const my = rect.height / 2;
+  const svgX = (mx - tx) / scale;
+  const svgY = (my - ty) / scale;
+  
+  scale = Math.min(scale * 1.15, 4.0);
+  tx = mx - svgX * scale;
+  ty = my - svgY * scale;
+  updateTransform();
+});
+
+document.getElementById('zoom-out').addEventListener('click', () => {
+  const rect = svg.getBoundingClientRect();
+  const mx = rect.width / 2;
+  const my = rect.height / 2;
+  const svgX = (mx - tx) / scale;
+  const svgY = (my - ty) / scale;
+  
+  scale = Math.max(scale / 1.15, 0.4);
+  tx = mx - svgX * scale;
+  ty = my - svgY * scale;
+  updateTransform();
+});
+
+document.getElementById('zoom-reset').addEventListener('click', () => {
+  scale = 1;
+  tx = 0;
+  ty = 0;
+  updateTransform();
+});
+
+// Overview panel toggle
+document.getElementById('overviewToggle').addEventListener('click', () => {
+  const panel = document.querySelector('.left-panel');
+  panel.classList.toggle('collapsed');
+});
+
+// Dark mode toggle
+document.getElementById('themeToggle').addEventListener('click', () => {
+  const dark = !document.documentElement.classList.contains('dark');
+  document.documentElement.classList.toggle('dark', dark);
+  localStorage.setItem('theme', dark ? 'dark' : 'light');
+});
+</script>
+</body>
+</html>
