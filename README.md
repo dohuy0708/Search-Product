@@ -16,6 +16,13 @@ Once deployed via **GitLab Pages**, you can view the live interactive dashboards
 
 ---
 
+## 📄 Project Documentation
+* 📝 **[Business Requirements Document (BRD) - Click to Read Online](product_search_requirements.md)**
+  * *Clicking this link will open the formatted BRD directly in GitLab's rich preview mode, complete with structured headers, tables, and Mermaid diagrams.*
+  * *To download the file directly, click the **Download** button in the top right corner of the GitLab file viewer page.*
+
+---
+
 ## 📋 Project Deliverables
 
 1. **Agile Business Requirements Document (BRD):**
