@@ -20,7 +20,9 @@ To realize this feature, the end-to-end process is organized into **4 core steps
 
 ### 3️⃣ PRD Specification & MVP Planning
 * **Process:** Draft a detailed Business Requirements Document (BRD/PRD) structured as **User Stories** with Gherkin-formatted **Acceptance Criteria (Given-When-Then)**, while planning release phases (MVP vs. Future Phases) for the Agile project.
-* **Detailed Specification:** 📄 **[Business Requirements Document (BRD)](product_search_requirements.md)** *(The official product specification document).*
+* **Detailed Specifications:** 
+  * 📄 **[Official Document (Word)](BRD_Product_Search_Engine.docx)** *(The official product specification document).*
+  * 🔍 **[Quick View (Markdown)](product_search_requirements.md)** *(View directly on Git repository).*
 
 ---
 
@@ -51,7 +53,9 @@ This project utilizes AI as a collaborative copilot to accelerate requirements a
   1. **Draft Generation:** Fed the requirements into the AI to generate the initial structural draft of the BRD.
   2. **Peer Review:** Reviewed the generated stories, identifying formatting and logic fixes.
   3. **Enhancement Loop:** Prompted the AI with consolidated feedback to enhance the Gherkin Acceptance Criteria, followed by a final validation review.
-* **Output:** [product_search_requirements.md](product_search_requirements.md) *(the structured, Agile-ready BRD).*
+* **Outputs:** 
+  * [Official Document (Word)](BRD_Product_Search_Engine.docx) *(The official product specification document).*
+  * [Quick View (Markdown)](product_search_requirements.md) *(the structured, Agile-ready BRD).*
 
 ---
 
