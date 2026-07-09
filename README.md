@@ -1,33 +1,26 @@
 # 🛒 Amaze Advanced Product Search Engine — Project Overview
 
-Tài liệu này trình bày chi tiết về quy trình phân tích nghiệp vụ, thiết kế giải pháp và phát triển tính năng **Tìm kiếm Sản phẩm Thông minh (Smart Product Search)** cho nền tảng thương mại điện tử B2B/B2C đa quốc gia.
+Tài liệu này tổng hợp quy trình làm việc toàn diện khi triển khai tính năng **Tìm kiếm Sản phẩm Thông minh (Smart Product Search)** cho nền tảng thương mại điện tử đa quốc gia. Tài liệu hướng tới việc làm rõ yêu cầu nghiệp vụ nhanh chóng và cộng tác hiệu quả theo mô hình phát triển **Agile**.
 
 ---
 
-## 🎯 Mục Tiêu & Ngữ Cảnh Dự Án (Introduction)
-Dự án được xây dựng nhằm giải quyết bài toán tìm kiếm sản phẩm đa ngôn ngữ (Anh - Thái - Việt), tự động tối ưu hóa hiển thị sản phẩm quảng cáo (Ad Bidding) và giảm thiểu tối đa tỷ lệ tìm kiếm không ra kết quả (Zero-Results Rate). Quy trình thực hiện dưới đây bám sát mô hình phát triển **Agile**, hướng tới việc làm rõ yêu cầu nhanh chóng và cộng tác hiệu quả với khách hàng/sếp thông qua các công cụ trực quan.
+## 🎯 Quy Trình Làm Việc & Các Tài Liệu Bàn Giao (Project Outline & Workflow)
 
----
-
-## 🔄 Quy Trình Làm Việc Khi Triển Khai Tính Năng Mới (Feature Workflow)
-
-Quy trình làm việc từ đầu đến cuối được trực quan hóa qua sơ đồ dưới đây:
-
-![Product Feature Workflow](./workflow.png)
+Để hiện thực hóa tính năng này, quy trình từ đầu đến cuối được tổ chức thành **4 bước cốt lõi** dưới đây. Sếp có thể truy cập nhanh vào từng tài liệu đính kèm tương ứng:
 
 ### 1️⃣ Phân tích & Đặt câu hỏi làm rõ (Analysis & Clarifying)
-* **Nội dung:** Đọc hiểu yêu cầu sơ bộ, phân tích các trường hợp biên (edge cases) và lập danh sách câu hỏi phản biện để thống nhất với các bên liên quan.
-* **Tài liệu bàn giao:** 📝 **[Open Questions & Clarifications](open_questions.md)** (Danh sách câu hỏi mở rộng nhằm làm rõ nghiệp vụ trước khi thiết kế).
+* **Quy trình:** Nghiên cứu yêu cầu ban đầu của khách hàng, phân tích các điểm mù (blind spots) và trường hợp biên (edge cases). Từ đó, lập danh sách câu hỏi phản biện chi tiết để thống nhất nghiệp vụ.
+* **Tài liệu bàn giao:** 📝 **[Open Questions & Clarifications](open_questions.md)** *(Danh sách câu hỏi mở rộng làm rõ yêu cầu để gửi khách hàng).*
 
-### 2️⃣ Phân tách tính năng & Catch-up với Client (Feature Breakdown & Client Alignment)
-* **Nội dung:** Bẻ nhỏ kiến trúc hệ thống và luồng dữ liệu (data flow) thành các vùng trải nghiệm trực quan giúp khách hàng dễ hình dung giải pháp mà không cần đọc văn bản dài dòng.
-* **Sản phẩm trình diễn trực quan (Live Demo):** 
-  * 📈 **[Business Value Presentation (Click to View)](https://huy.do.pages.kyanon.digital/search_engine/index.html)** *(Trang tương tác trực quan hóa luồng nghiệp vụ trên trình duyệt).*
-  * 🛠️ **[System Architecture Map (Click to View)](https://huy.do.pages.kyanon.digital/search_engine/architecture.html)** *(Sơ đồ kiến trúc luồng kỹ thuật từ API Gateway đến Database).*
+### 2️⃣ Phân tách tính năng & Thống nhất giải pháp trực quan (Client Alignment)
+* **Quy trình:** Sơ đồ hóa kiến trúc hệ thống và luồng dữ liệu (data flow) thành các sơ đồ tương tác trực quan (mockup/dashboard) để khách hàng và sếp dễ hình dung giải pháp mà không cần đọc văn bản khô khan.
+* **Trình diễn trực quan (Tải file chạy trực tiếp trên trình duyệt):** 
+  * 📈 **[Business Value Presentation](search_business_presentation.html)** *(Bản đồ giá trị kinh doanh và các luồng nghiệp vụ tương tác).*
+  * 🛠️ **[System Architecture Map](search_architecture_presentation.html)** *(Sơ đồ thiết kế kiến trúc hệ thống tìm kiếm).*
 
 ### 3️⃣ Đặc tả tài liệu PRD & Chia phase MVP (PRD & MVP Planning)
-* **Nội dung:** Soạn thảo tài liệu đặc tả yêu cầu nghiệp vụ (BRD/PRD) chi tiết bao gồm User Stories, tiêu chí nghiệm thu (Acceptance Criteria) viết bằng ngôn ngữ Gherkin (Given-When-Then), phân chia rõ ràng những gì nằm trong pha MVP (Sprint 1-2) và các pha tiếp theo.
-* **Tài liệu đặc tả chi tiết:** 📄 **[Business Requirements Document (BRD)](product_search_requirements.md)** *(Đọc trực tiếp trên GitLab hoặc tải file về máy).*
+* **Quy trình:** Viết tài liệu đặc tả yêu cầu nghiệp vụ (BRD/PRD) chi tiết dưới dạng các **User Stories** đi kèm tiêu chí nghiệm thu **Acceptance Criteria (Gherkin format Given-When-Then)**, đồng thời phân chia các giai đoạn triển khai (MVP vs. Future Phases) cho dự án Agile.
+* **Tài liệu đặc tả chi tiết:** 📄 **[Business Requirements Document (BRD)](product_search_requirements.md)** *(Tài liệu đặc tả nghiệp vụ chính thức).*
 
 ---
 
