@@ -14,8 +14,9 @@ To realize this feature, the end-to-end process is organized into **4 core steps
 
 ### 2️⃣ Feature Decomposition & Visual Client Alignment
 * **Process:** Map the system architecture and data flows into highly interactive visual diagrams (mockups/dashboards) so that the client and You can easily visualize the solution without reading dry technical specifications.
-* **Visual Presentation (Download and double-click to run directly in your browser):** 
-  * 📈 **[Business Value Presentation](search_business_presentation.html)** *(Interactive business value map showing step-by-step query flows).*
+* **Visual Presentations:** 
+  * 🌐 **[View Online (GitHub Pages)](https://dohuy0708.github.io/Search-Product/)** *(View the interactive presentation directly on your browser).*
+  * 📈 **[Local File (Download & Run)](search_business_presentation.html)** *(Download and double-click to run locally).*
 
 ### 3️⃣ PRD Specification & MVP Planning
 * **Process:** Draft a detailed Business Requirements Document (BRD/PRD) structured as **User Stories** with Gherkin-formatted **Acceptance Criteria (Given-When-Then)**, while planning release phases (MVP vs. Future Phases) for the Agile project.
