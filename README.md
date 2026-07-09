@@ -1,46 +1,52 @@
-# 🛒 Amaze Advanced Product Search Engine
+# 🛒 Amaze Advanced Product Search Engine — Project Overview
 
-A smart, high-speed, and multilingual product search engine designed for global B2B/B2C e-commerce platforms. This project translates complex business goals into agile technical blueprints with real-time analytics and continuous self-learning loops.
-
----
-
-## 🔗 Live Presentations (Interactive Diagrams)
-Once deployed via **GitLab Pages**, you can view the live interactive dashboards directly in your browser:
-
-* 📈 **[Business Value Presentation (Click to View)](https://<your-gitlab-group-or-username>.gitlab.io/<your-repo-name>/index.html)**
-  * *Shows how query routing, translation, and ad bidding directly impact conversion rates, premium UX, and business revenue.*
-* 🛠️ **[System Architecture Map (Click to View)](https://<your-gitlab-group-or-username>.gitlab.io/<your-repo-name>/architecture.html)**
-  * *Explores technical components, caching layers, and decoupled messaging pipelines (Kong Gateway, Redis, Elasticsearch, Kafka).*
-
-*(Note: Please replace `<your-gitlab-group-or-username>` and `<your-repo-name>` with your actual GitLab project paths after deployment).*
+Tài liệu này trình bày chi tiết về quy trình phân tích nghiệp vụ, thiết kế giải pháp và phát triển tính năng **Tìm kiếm Sản phẩm Thông minh (Smart Product Search)** cho nền tảng thương mại điện tử B2B/B2C đa quốc gia.
 
 ---
 
-## 📄 Project Documentation
-* 📝 **[Business Requirements Document (BRD) - Click to Read Online](product_search_requirements.md)**
-  * *Clicking this link will open the formatted BRD directly in GitLab's rich preview mode, complete with structured headers, tables, and Mermaid diagrams.*
-  * *To download the file directly, click the **Download** button in the top right corner of the GitLab file viewer page.*
+## 🎯 Mục Tiêu & Ngữ Cảnh Dự Án (Introduction)
+Dự án được xây dựng nhằm giải quyết bài toán tìm kiếm sản phẩm đa ngôn ngữ (Anh - Thái - Việt), tự động tối ưu hóa hiển thị sản phẩm quảng cáo (Ad Bidding) và giảm thiểu tối đa tỷ lệ tìm kiếm không ra kết quả (Zero-Results Rate). Quy trình thực hiện dưới đây bám sát mô hình phát triển **Agile**, hướng tới việc làm rõ yêu cầu nhanh chóng và cộng tác hiệu quả với khách hàng/sếp thông qua các công cụ trực quan.
 
 ---
 
-## 📋 Project Deliverables
+## 🔄 Quy Trình Làm Việc Khi Triển Khai Tính Năng Mới (Feature Workflow)
 
-1. **Agile Business Requirements Document (BRD):**
-   * Located at [product_search_requirements.md](product_search_requirements.md).
-   * Maps business objectives into detailed Agile Epics, User Stories, and Gherkin Acceptance Criteria.
-2. **Multi-language Search & Query Translation Pipeline:**
-   * Features specialized English, Vietnamese, and Thai segmenters and dictionaries.
-   * Auto-enrichment during ingestion and query expansion during search times.
-3. **Smart Ranking Rules:**
-   * Ranks items based on Text Relevance, Sponsored Keywords (Ad bidding), and Stock Availability.
-4. **AI-Driven Continuous Learning Loop:**
-   * Automatically captures zero-results queries and queues spelling and synonym corrections for operational review.
+Quy trình làm việc từ đầu đến cuối được trực quan hóa qua sơ đồ dưới đây:
+
+![Product Feature Workflow](./workflow.png)
+
+### 1️⃣ Phân tích & Đặt câu hỏi làm rõ (Analysis & Clarifying)
+* **Nội dung:** Đọc hiểu yêu cầu sơ bộ, phân tích các trường hợp biên (edge cases) và lập danh sách câu hỏi phản biện để thống nhất với các bên liên quan.
+* **Tài liệu bàn giao:** 📝 **[Open Questions & Clarifications](open_questions.md)** (Danh sách câu hỏi mở rộng nhằm làm rõ nghiệp vụ trước khi thiết kế).
+
+### 2️⃣ Phân tách tính năng & Catch-up với Client (Feature Breakdown & Client Alignment)
+* **Nội dung:** Bẻ nhỏ kiến trúc hệ thống và luồng dữ liệu (data flow) thành các vùng trải nghiệm trực quan giúp khách hàng dễ hình dung giải pháp mà không cần đọc văn bản dài dòng.
+* **Sản phẩm trình diễn trực quan (Live Demo):** 
+  * 📈 **[Business Value Presentation (Click to View)](https://huy.do.pages.kyanon.digital/search_engine/index.html)** *(Trang tương tác trực quan hóa luồng nghiệp vụ trên trình duyệt).*
+  * 🛠️ **[System Architecture Map (Click to View)](https://huy.do.pages.kyanon.digital/search_engine/architecture.html)** *(Sơ đồ kiến trúc luồng kỹ thuật từ API Gateway đến Database).*
+
+### 3️⃣ Đặc tả tài liệu PRD & Chia phase MVP (PRD & MVP Planning)
+* **Nội dung:** Soạn thảo tài liệu đặc tả yêu cầu nghiệp vụ (BRD/PRD) chi tiết bao gồm User Stories, tiêu chí nghiệm thu (Acceptance Criteria) viết bằng ngôn ngữ Gherkin (Given-When-Then), phân chia rõ ràng những gì nằm trong pha MVP (Sprint 1-2) và các pha tiếp theo.
+* **Tài liệu đặc tả chi tiết:** 📄 **[Business Requirements Document (BRD)](product_search_requirements.md)** *(Đọc trực tiếp trên GitLab hoặc tải file về máy).*
 
 ---
 
-## 🛠️ Technology Stack
-* **API Gateway:** Kong / Apache APISIX (Routing, security, and multi-tenancy)
-* **Search Engine:** Elasticsearch (Fuzzy matches, multi-lingual tokenization)
-* **Cache:** Redis (Autocomplete RAM cache < 5ms)
-* **Message Queue:** Kafka / RabbitMQ (Decoupled logs and updates)
-* **Database:** PostgreSQL / MySQL (Transactional source of truth)
+## 🤖 Kỹ Năng Sử Dụng AI Trong Dự Án (AI Copilot Integration)
+
+Dự án này ứng dụng AI làm trợ lý đồng hành xuyên suốt quá trình thiết kế tài liệu và xây dựng mockup.
+
+### 1. Các AI Skills được sử dụng để tối ưu hiệu suất:
+* **`effective-html`** (`npx skills add plannotator/effective-html`):
+  * *Hiệu quả:* Tạo nhanh các trang slide/sơ đồ HTML tương tác cao, giúp khách hàng nước ngoài và sếp hiểu nhanh kiến trúc hệ thống mà không cần đọc tài liệu kỹ thuật khô khan.
+  * *Output:* Trang HTML tương tác [search_business_presentation.html](search_business_presentation.html).
+* **`grill-me`** (`npx skills@latest add mattpocock/skills --skill grill-me`):
+  * *Hiệu quả:* Thực hiện phỏng vấn phản biện sâu với AI để phát hiện các lỗ hổng nghiệp vụ và hoàn thiện đặc tả.
+  * *Output:* Tài liệu câu hỏi mở rộng [open_questions.md](open_questions.md).
+
+### 2. Quy trình cộng tác với AI khi làm tài liệu nghiệp vụ (BRD):
+Quy trình làm việc với AI được thiết kế chặt chẽ qua các bước:
+1. **Đưa ra yêu cầu rõ ràng (Clear Requirements):** Cung cấp ngữ cảnh, mục tiêu kinh doanh và mô hình Agile cho AI.
+2. **AI tạo bản phác thảo đầu tiên (Initial Draft):** Nhận bản thảo khung BRD cơ bản.
+3. **Đọc, review và đánh giá (Review & Evaluate):** Đánh giá tính thực tế của các stories và tiêu chí nghiệm thu.
+4. **Prompt điều chỉnh & cập nhật (Feedback Loop):** Yêu cầu AI sửa lỗi, dịch thuật sang tiếng Anh thân thuộc và cập nhật luật xếp hạng.
+5. **Minh chứng lịch sử tương tác (Evidence Logs):** 🤖 **[AI Collaboration & Prompt Log](ai_collaboration_log.md)** *(Nhấp vào để xem chi tiết các câu lệnh prompt và phản hồi từ AI).*
