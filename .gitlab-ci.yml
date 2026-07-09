@@ -1,0 +1,11 @@
+pages:
+  stage: deploy
+  script:
+    - mkdir public
+    - cp search_business_presentation.html public/index.html
+    - cp search_architecture_presentation.html public/architecture.html
+  artifacts:
+    paths:
+      - public
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
